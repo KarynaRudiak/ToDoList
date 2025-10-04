@@ -1,0 +1,11 @@
+.list {
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.empty {
+  text-align: center;
+  padding: 10px;
+  color: #777;
+}

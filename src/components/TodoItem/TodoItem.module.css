@@ -1,0 +1,33 @@
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+span {
+  flex: 1;              
+  margin-left: 10px;     
+  text-align: left;      
+}
+
+input[type="checkbox"] {
+  accent-color: #4f6dff; 
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: gray;
+}
+
+button {
+    border: none;
+    background: none;
+    color: #4f6dff;
+    font-size: 18px;
+    cursor: pointer;
+}
