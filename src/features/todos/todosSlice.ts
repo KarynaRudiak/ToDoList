@@ -1,5 +1,6 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { loadTodos } from "../../utils/localStorage";
 
 
 interface Todo {
@@ -13,7 +14,7 @@ interface TodosState {
 };
 
 const initialState: TodosState = {
-    items: []
+    items: loadTodos(),
 };
 
 const todosSlice = createSlice({
