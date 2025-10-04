@@ -15,7 +15,6 @@ span,
   cursor: text;
   font-size: 16px;
   line-height: 1.5;
-  height: 24px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -69,4 +68,16 @@ button {
 
 button:hover {
   color: #3347cc;
+}
+
+.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.fadeOut {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
