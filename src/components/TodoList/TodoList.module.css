@@ -99,6 +99,12 @@
   text-decoration: underline;
 }
 
+.counter {
+  margin: 8px 0 6px;
+  font-size: 10px;
+  color: #444;
+  opacity: 0.9;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
