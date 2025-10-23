@@ -4,29 +4,37 @@
   margin-bottom: 20px;
 }
 
-.inputWrap {           
+.inputWrap {
   flex: 1;
+  position: relative;
 }
 
 .input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d9dbe0;
+  border: 1px solid var(--input-border);
   border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--input-text);
   font-size: 16px;
   outline: none;
+  caret-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--input-placeholder);
 }
 
 .input:focus {
-  border-color: #4f6dff;
-  box-shadow: 0 0 0 3px rgba(79, 109, 255, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .button {
   padding: 10px 14px;
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #4f6dff;
+  background: var(--accent);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -36,22 +44,18 @@
   transform: translateY(1px);
 }
 
-.inputWrap { position: relative; } 
-
 .suggestBox {
   position: absolute;
   left: 0;
   right: 0;
   top: calc(100% + 6px);
-  z-index: 10;
-
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  z-index: 1000;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 4px;
   box-shadow: 0 10px 20px rgba(0,0,0,.06);
-
-  max-height: 220px;  
+  max-height: 220px;
   overflow: auto;
 }
 
@@ -65,8 +69,9 @@
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  color: var(--text);
 }
 
 .suggestItem:hover {
-  background: #f3f4f6;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
 }
