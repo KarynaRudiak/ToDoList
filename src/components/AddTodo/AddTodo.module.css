@@ -1,26 +1,72 @@
 .form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.inputWrap {           
+  flex: 1;
 }
 
 .input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #d9dbe0;
-    border-radius: 10px;
-    font-size: 16px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d9dbe0;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #4f6dff;
+  box-shadow: 0 0 0 3px rgba(79, 109, 255, 0.12);
 }
 
 .button {
-    padding: 10px 14px;
-    border: none;
-    border-radius: 10px;
-    background: #4f6dff;
-    color: #fff;
-    font-weight: 600;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #4f6dff;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .button:active {
-    transform: translateY(1px);
+  transform: translateY(1px);
+}
+
+.inputWrap { position: relative; } 
+
+.suggestBox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 10;
+
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 10px 20px rgba(0,0,0,.06);
+
+  max-height: 220px;  
+  overflow: auto;
+}
+
+.suggestItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.suggestItem:hover {
+  background: #f3f4f6;
 }

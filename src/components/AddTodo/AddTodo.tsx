@@ -1,35 +1,99 @@
-import { useState } from "react";
-import { useAppDispatch } from "../../app/hooks";
+import { useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { addTodo } from "../../features/todos/todosSlice";
 
 import styles from "./AddTodo.module.css";
 
 export default function AddTodo() {
-    const [text, setText] = useState("");
+  const dispatch = useAppDispatch();
+  const todos = useAppSelector((s) => s.todos.items);
 
-    const dispatch = useAppDispatch();
+  const [text, setText] = useState("");
+  const [open, setOpen] = useState(false);
 
-    const onSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+  const extractTags = (text: string): string[] => {
+    const re = /#([A-Za-zА-Яа-яЁёІіЇїЄє0-9_-]+)/g;
+    const set = new Set<string>();
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text))) set.add(m[1].toLowerCase());
+    return [...set];
+  };
 
-        const value = text.trim();
-        if (!value) return;
+  const allTags = useMemo(() => {
+    const s = new Set<string>();
+    for (const t of todos) {
+      const tags = Array.isArray(t.tags) ? t.tags : extractTags(t.text); // ← без any
+      for (const tag of tags) s.add(tag.toLowerCase());
+    }
+    return [...s].sort();
+  }, [todos]);
 
-        dispatch(addTodo(value));
+  const TAG_RE = /(^|\s)#([A-Za-zА-Яа-яЁёІіЇїЄє0-9_-]*)\s?$/;
+  const match = text.match(TAG_RE);
+  const fragment = (match?.[2] ?? "").toLowerCase();
 
-        setText("");
-    };
+  const suggestions = useMemo(() => {
+    if (!match) return [];
+    if (fragment === "") return allTags.slice(0, 6);
+    return allTags.filter((t) => t.startsWith(fragment)).slice(0, 6);
+  }, [match, fragment, allTags]);
 
-    return (
-        <form onSubmit={onSubmit} className={styles.form}>
-            <input
-                type="text"
-                placeholder="Add your task"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className={styles.input}
-            />
-            <button type="submit" className={styles.button}>Add</button>
-        </form>
-    )
-};
+  const onChange = (v: string) => {
+    setText(v);
+    setOpen(!!v.match(TAG_RE));
+  };
+
+  const apply = (tag: string) => {
+    if (!match) return;
+    const before = text.slice(0, match.index!);
+    const sep = match[1];
+    const after = text.slice((match.index ?? 0) + match[0].length);
+    setText(`${before}${sep}#${tag} ${after}`);
+    setOpen(false);
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = text.trim();
+    if (!value) return;
+    dispatch(addTodo(value));
+    setText("");
+    setOpen(false);
+  };
+
+  return (
+    <form onSubmit={onSubmit} className={styles.form} autoComplete="off">
+      <div className={styles.inputWrap}>
+        <input
+          type="text"
+          placeholder="Add your task (use #tags)"
+          value={text}
+          onChange={(e) => onChange(e.target.value)}
+          className={styles.input}
+        />
+
+        {open && suggestions.length > 0 && (
+          <div className={styles.suggestBox}>
+            {suggestions.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                className={styles.suggestItem}
+                onMouseDown={(ev) => {
+                  ev.preventDefault();
+                  apply(tag);
+                }}
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <button type="submit" className={styles.button}>
+        Add
+      </button>
+    </form>
+  );
+}

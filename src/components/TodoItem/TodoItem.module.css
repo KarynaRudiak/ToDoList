@@ -81,3 +81,21 @@ button:hover {
   transform: translateY(6px);
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
+
+.tagsRow {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.tagChip {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease;
+}
+.tagChip:hover { background: #eef1f6; }

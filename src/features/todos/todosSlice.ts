@@ -7,6 +7,7 @@ interface Todo {
     id: string;
     text: string;
     completed: boolean;
+    tags?: string[];
 };
 
 interface TodosState {
@@ -15,6 +16,14 @@ interface TodosState {
 
 const initialState: TodosState = {
     items: loadTodos(),
+};
+
+const extractTags = (text: string): string[] => {
+  const re = /#([A-Za-zА-Яа-яЁёІіЇїЄє0-9_-]+)/g;
+  const set = new Set<string>();
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) set.add(m[1].toLowerCase());
+  return [...set];
 };
 
 const todosSlice = createSlice({
@@ -28,6 +37,7 @@ const todosSlice = createSlice({
                         id: nanoid(),
                         text,
                         completed: false,
+                        tags: extractTags(text),
                     } as Todo,
                 };
             },
@@ -47,6 +57,7 @@ const todosSlice = createSlice({
             const todo = state.items.find((t) => t.id === id);
             if(todo) {
                 todo.text = newText;
+                todo.tags = extractTags(newText);
             }
         }
     },

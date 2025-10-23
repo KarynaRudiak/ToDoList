@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import TodoItem from "../TodoItem/TodoItem";
 import { addTodo } from "../../features/todos/todosSlice";
@@ -10,6 +10,7 @@ export default function TodoList() {
   const dispatch = useAppDispatch();
 
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const [lastDeleted, setLastDeleted] = useState<{
     id: string;
@@ -17,11 +18,16 @@ export default function TodoList() {
     completed: boolean;
   } | null>(null);
 
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
-    return true;
-  });
+  const filteredTodos = useMemo(() => {
+    const base = todos.filter((todo) => {
+      if (filter === "active") return !todo.completed;
+      if (filter === "completed") return todo.completed;
+      return true;
+    });
+    return selectedTag
+      ? base.filter((t) => (t.tags ?? []).includes(selectedTag))
+      : base;
+  }, [todos, filter, selectedTag]);
 
   const activeCount = todos.reduce((acc, t) => acc + (t.completed ? 0 : 1), 0);
   const completedCount = todos.length - activeCount;
@@ -65,7 +71,19 @@ export default function TodoList() {
         {activeCount} Active · {completedCount} Completed
       </div>
 
-      <div className={styles.list} key={filter}>
+      {selectedTag && (
+        <div className={styles.selectedTag}>
+          Filtered by: <strong>#{selectedTag}</strong>
+          <button
+            className={styles.clearTagBtn}
+            onClick={() => setSelectedTag(null)}
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
+      <div className={styles.list} key={`${filter}-${selectedTag ?? "all"}`}>
         {filteredTodos.length === 0 ? (
           <p className={styles.empty}>No tasks found</p>
         ) : (
@@ -80,6 +98,9 @@ export default function TodoList() {
                 text={todo.text}
                 completed={todo.completed}
                 onDeleted={(t) => setLastDeleted(t)}
+
+                tags={todo.tags ?? []}                   
+                onTagClick={(tag) => setSelectedTag(tag)}
               />
             </div>
           ))
