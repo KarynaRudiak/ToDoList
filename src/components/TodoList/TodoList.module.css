@@ -5,6 +5,14 @@
   border-radius: 8px;
 }
 
+.list > * {
+  border-bottom: 1px solid var(--border);
+}
+
+.list > *:last-child {
+  border-bottom: none;
+}
+
 .empty {
   text-align: center;
   padding: 10px;
