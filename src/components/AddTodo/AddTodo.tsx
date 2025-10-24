@@ -10,6 +10,7 @@ export default function AddTodo() {
 
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<string>("");
 
   const extractTags = (text: string): string[] => {
     const re = /#([A-Za-zА-Яа-яЁёІіЇїЄє0-9_-]+)/g;
@@ -56,8 +57,9 @@ export default function AddTodo() {
     e.preventDefault();
     const value = text.trim();
     if (!value) return;
-    dispatch(addTodo(value));
+    dispatch(addTodo({ text: value, dueAt: date || null }));
     setText("");
+    setDate("");
     setOpen(false);
   };
 
@@ -90,6 +92,14 @@ export default function AddTodo() {
           </div>
         )}
       </div>
+
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className={styles.dateInput}
+        aria-label="Due date"
+      />
 
       <button type="submit" className={styles.button}>
         Add

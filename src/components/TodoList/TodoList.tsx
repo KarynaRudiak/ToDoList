@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import TodoItem from "../TodoItem/TodoItem";
-import { addTodo } from "../../features/todos/todosSlice";
+import { addTodo, togglePin } from "../../features/todos/todosSlice";
 
 import styles from "./TodoList.module.css";
 
@@ -24,13 +24,27 @@ export default function TodoList() {
       if (filter === "completed") return todo.completed;
       return true;
     });
-    return selectedTag
+
+    const byTag = selectedTag
       ? base.filter((t) => (t.tags ?? []).includes(selectedTag))
       : base;
+
+    return [...byTag].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
   }, [todos, filter, selectedTag]);
 
   const activeCount = todos.reduce((acc, t) => acc + (t.completed ? 0 : 1), 0);
   const completedCount = todos.length - activeCount;
+
+  const tagCounts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const t of todos)
+      for (const tag of t.tags ?? []) {
+        m.set(tag, (m.get(tag) ?? 0) + 1);
+      }
+    return [...m.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag, count]) => ({ tag, count }));
+  }, [todos]);
 
   useEffect(() => {
     if (!lastDeleted) return;
@@ -71,6 +85,35 @@ export default function TodoList() {
         {activeCount} Active · {completedCount} Completed
       </div>
 
+      {tagCounts.length > 0 && (
+        <div className={styles.tagsBar}>
+          {tagCounts.map(({ tag, count }) => (
+            <button
+              key={tag}
+              type="button"
+              className={`${styles.tagFilter} ${
+                selectedTag === tag ? styles.activeTag : ""
+              }`}
+              onClick={() => setSelectedTag(tag)}
+              title={`#${tag} · ${count}`} // подсказка оставлена, можно убрать
+            >
+              #{tag}
+            </button>
+          ))}
+
+          {selectedTag && (
+            <button
+              type="button"
+              className={styles.clearTagInline}
+              onClick={() => setSelectedTag(null)}
+              title="Show all tasks"
+            >
+              Show all
+            </button>
+          )}
+        </div>
+      )}
+
       {selectedTag && (
         <div className={styles.selectedTag}>
           Filtered by: <strong>#{selectedTag}</strong>
@@ -98,9 +141,11 @@ export default function TodoList() {
                 text={todo.text}
                 completed={todo.completed}
                 onDeleted={(t) => setLastDeleted(t)}
-
-                tags={todo.tags ?? []}                   
+                tags={todo.tags ?? []}
                 onTagClick={(tag) => setSelectedTag(tag)}
+                pinned={!!todo.pinned}
+                onTogglePin={() => dispatch(togglePin(todo.id))}
+                dueAt={todo.dueAt ?? null}
               />
             </div>
           ))

@@ -7,6 +7,8 @@ interface Todo {
   text: string;
   completed: boolean;
   tags?: string[];
+  pinned?: boolean;
+  dueAt?: string | null;
 }
 
 interface TodosState {
@@ -18,7 +20,7 @@ const initialState: TodosState = {
 };
 
 const extractTags = (text: string): string[] => {
-  const re = /#([A-Za-zА-Яа-яЁёІіЇїЄє0-9_-]+)/g;
+  const re = /#([\p{L}\d_-]+)/gu;
   const set = new Set<string>();
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) set.add(m[1].toLowerCase());
@@ -32,20 +34,26 @@ const stripTags = (text: string): string => {
     .trim();
 };
 
+type AddTodoInput = string | { text: string; dueAt?: string | null };
+
 const todosSlice = createSlice({
   name: "todos",
   initialState,
   reducers: {
     addTodo: {
-      prepare(input: string) {
-        const tags = extractTags(input);
-        const text = stripTags(input);
+      prepare(input: AddTodoInput) {
+        const rawText = typeof input === "string" ? input : input.text;
+        const dueAt = typeof input === "string" ? null : input.dueAt ?? null;
+        const tags = extractTags(rawText);
+        const text = stripTags(rawText);
         return {
           payload: {
             id: nanoid(),
             text,
             completed: false,
             tags,
+            pinned: false,
+            dueAt,
           } as Todo,
         };
       },
@@ -65,11 +73,23 @@ const todosSlice = createSlice({
       const t = state.items.find((x) => x.id === id);
       if (t) {
         t.tags = extractTags(newText);
-        t.text = stripTags(newText); 
+        t.text = stripTags(newText);
       }
+    },
+    togglePin(state, action: PayloadAction<string>) {
+      const t = state.items.find((x) => x.id === action.payload);
+      if (t) t.pinned = !t.pinned;
+    },
+    setDueDate(
+      state,
+      action: PayloadAction<{ id: string; dueAt: string | null }>
+    ) {
+      const t = state.items.find((x) => x.id === action.payload.id);
+      if (t) t.dueAt = action.payload.dueAt;
     },
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, editTodo } = todosSlice.actions;
+export const { addTodo, toggleTodo, deleteTodo, editTodo, togglePin, setDueDate } =
+  todosSlice.actions;
 export default todosSlice.reducer;

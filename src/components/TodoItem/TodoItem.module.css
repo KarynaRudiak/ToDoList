@@ -86,8 +86,8 @@ button:hover {
 
 .tagsRow {
   display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 2px;
+  /* margin-top: 6px; */
   flex-wrap: wrap;
 }
 
@@ -105,3 +105,45 @@ button:hover {
 .tagChip:hover {
   background: color-mix(in srgb, var(--text) 12%, transparent);
 }
+
+.pinned { color: var(--accent); }
+
+.rightSide { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  /* margin-left: 8px;  */
+}
+
+.hiddenDate { 
+  position: absolute; 
+  opacity: 0; 
+  pointer-events: none; 
+  width: 0; 
+  height: 0; 
+}
+
+.dueBadge {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  background: var(--card);
+  color: var(--text);
+}
+.overdue { border-color: #ff7272; color: #ff7272; }
+.today   { border-color: #f59e0b; color: #f59e0b; }
+.soon    { border-color: #22c55e; color: #22c55e; }
+
+.iconBtn {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: color .2s ease, transform .05s ease;
+}
+.iconBtn:hover { color: var(--accent); }
+.pinned { color: var(--accent); }
