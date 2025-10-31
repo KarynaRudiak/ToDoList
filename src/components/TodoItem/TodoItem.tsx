@@ -6,6 +6,7 @@ import {
   editTodo,
   setDueDate,
 } from "../../features/todos/todosSlice";
+import { EditIcon, TrashIcon } from "../Icons/Icons";
 import styles from "./TodoItem.module.css";
 
 interface TodoItemProps {
@@ -233,7 +234,7 @@ export default function TodoItem({
         </button>
 
         <button onClick={handleDelete} className={styles.iconBtn} title="Delete">
-          x
+          <TrashIcon/>
         </button>
       </div>
     </div>
